@@ -191,8 +191,6 @@ border-radius: 10px;
   flex-direction: column;
   row-gap: 20px;}
    }
-.bottom-section {
-}
 .bottom-section__panel-nav {
   display: flex;
   flex-shrink: 0;
