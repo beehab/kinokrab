@@ -16,9 +16,6 @@
   overflow: hidden;
   overflow: scroll;
   }
-  
-  
-
   .body__elipse-left {
     position: fixed;
     z-index: -1;
@@ -316,7 +313,7 @@ opacity: 30%;
    }
   .menu__logo::before {
   content: '';
-  background: url(/img/logo-modal.svg) left no-repeat;
+  background: url(../img/logo-modal.svg) left no-repeat;
   width: 100%;
   height: 40px;
   background-size: contain;
@@ -490,7 +487,7 @@ transition: 0.5s;
    }
 .modal__logo::before {
   content: '';
-  background: url(/img/logo-modal.svg) left no-repeat;
+  background: url(../img/logo-modal.svg) left no-repeat;
   width: 100%;
   height: 40px;
   background-size: contain;
@@ -502,7 +499,7 @@ transition: 0.5s;
   }
 .modal__close::before {
   content: "";
-  background: url(/img/icons/icon-closed.svg) center no-repeat;
+  background: url(../img/icons/icon-closed.svg) center no-repeat;
   width: 35px;
   height: 35px;
   cursor: pointer;
@@ -956,7 +953,7 @@ object-fit: contain;
   }
 .modal-contacts__logo::before {
   content: '';
-  background: url(/img/logo-modal.svg) left no-repeat;
+  background: url(../img/logo-modal.svg) left no-repeat;
   width: 100%;
   height: 40px;
   background-size: contain;
@@ -974,7 +971,7 @@ object-fit: contain;
  }
 .modal-contacts__close::before {
   content: "";
-  background: url(/img/icons/icon-closed.svg) center no-repeat;
+  background: url(../img/icons/icon-closed.svg) center no-repeat;
   width: 35px;
   height: 35px;
   cursor: pointer;
@@ -1068,28 +1065,28 @@ font-size: 16px;
 }
 .modal-contacts__link-loc::before {
   content: "";
-  background: url(/img/icons/popup/icon-location.svg) 0 0 no-repeat;
+  background: url(../img/icons/popup/icon-location.svg) 0 0 no-repeat;
   width: 20px;
   height: 20px;
   margin-right: 10px;
 }
 .modal-contacts__link-vib::before {
   content: "";
-  background: url(/img/icons/popup/icon-viber.svg) 0 0 no-repeat;
+  background: url(../img/icons/popup/icon-viber.svg) 0 0 no-repeat;
   width: 20px;
   height: 20px;
   margin-right: 10px;
 }
 .modal-contacts__link-tg::before {
   content: "";
-  background: url(/img/icons/popup/icon-telegram.svg) 0 0 no-repeat;
+  background: url(../img/icons/popup/icon-telegram.svg) 0 0 no-repeat;
   width: 20px;
   height: 20px;
   margin-right: 10px;
 }
 .modal-contacts__link-tel::before {
   content: "";
-  background: url(/img/icons/popup/icon-tel.svg) 0 0 no-repeat;
+  background: url(../img/icons/popup/icon-tel.svg) 0 0 no-repeat;
   width: 15px;
   height: 30px;
   margin-right: 10px;
@@ -1097,7 +1094,7 @@ font-size: 16px;
 
 .modal-contacts__link-email::before {
   content: "";
-  background: url(/img/icons/popup/icon-email.svg) 0 0 no-repeat;
+  background: url(../img/icons/popup/icon-email.svg) 0 0 no-repeat;
   width: 20px;
   height: 15px;
   margin-right: 10px;
@@ -1163,7 +1160,7 @@ max-width: 420px;
    }
    .popup__logo::before {
   content: '';
-  background: url(/img/logo-modal.svg) left no-repeat;
+  background: url(../img/logo-modal.svg) left no-repeat;
   width: 100%;
   height: 40px;
   background-size: contain;
@@ -1175,7 +1172,7 @@ max-width: 420px;
   }
   .popup__close::before {
   content: "";
-  background: url(/img/icons/icon-closed.svg) center no-repeat;
+  background: url(../img/icons/icon-closed.svg) center no-repeat;
   width: 35px;
   height: 35px;
   cursor: pointer;
@@ -1231,7 +1228,7 @@ font-weight: 700;
 }
 .footer__button-close::before {
   content: "";
-  background: url(/img/icons/icon-closed.svg) center no-repeat;
+  background: url(../img/icons/icon-closed.svg) center no-repeat;
   width: 35px;
   height: 35px;
  cursor: pointer;
@@ -1272,7 +1269,7 @@ font-weight: 700;
   }
   .footer-button-open::before {
   content: "";
-  background: url(/img/icons/icon-footer-open.svg) center no-repeat;
+  background: url(../img/icons/icon-footer-open.svg) center no-repeat;
   width: 98%;
   height: 24px;
 }
@@ -1412,7 +1409,7 @@ font-weight: 700;
   }
 .wrap-background::before {
    content: " ";
-   background: url(/img/figure-faq-l.svg) right no-repeat; 
+   background: url(../img/figure-faq-l.svg) right no-repeat; 
    position: absolute;
    width: 100%;
    height: 100%;
@@ -1422,7 +1419,7 @@ font-weight: 700;
  }
 .wrap-background::after {
 content: " ";
-background: url(/img/figure-faq-r.svg) left no-repeat; 
+background: url(../img/figure-faq-r.svg) left no-repeat; 
 position: absolute;
 width: 100%;
 height: 100%;
@@ -1473,7 +1470,7 @@ transition: all 0.1s ease-in-out;
 }
 .dropdown__question::before {
   content: " ";
-  background: url(/img/icons/icon-inline.svg) left no-repeat;
+  background: url(../img/icons/icon-inline.svg) left no-repeat;
   width: 30px;
   height: 15px;
   }
@@ -1736,7 +1733,7 @@ width: 100%;
   .page__background::before {
     content: " ";
     position: absolute;
-    background: url(/img/figure-faq-l.svg) right no-repeat;
+    background: url(../img/figure-faq-l.svg) right no-repeat;
     width: 100%;
     height: 100%;
     top: center;
@@ -2051,7 +2048,7 @@ height: 300px;
   }
 .review-slide__author::before {
   content: " ";
-  background: url(/img/icons/icon-reviews-user.svg) center no-repeat;
+  background: url(../img/icons/icon-reviews-user.svg) center no-repeat;
   width: 80px;
   height: 80px;
 }
@@ -2110,7 +2107,7 @@ height: 300px;
 }
 .link-facebook::before {
   content: " ";
-  background: url(/img/icons/facebook-reviews.svg) center no-repeat;
+  background: url(../img/icons/facebook-reviews.svg) center no-repeat;
   width: 30px;
   height: 30px;
 }
@@ -2139,7 +2136,7 @@ height: 300px;
 }
 .date::before {
   content: " ";
-  background: url(/img/icons/icon-calendar.svg) center no-repeat;
+  background: url(../img/icons/icon-calendar.svg) center no-repeat;
   width: 24px;
   height: 24px;
 }
@@ -2234,7 +2231,7 @@ max-height: 200px;
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url(/img/services/black-director-chair.jpg);
+  background-image: url(../img/services/black-director-chair.jpg);
   background-repeat: no-repeat;
   background-position: center top;
   max-width: 100%;
@@ -2248,7 +2245,7 @@ max-height: 200px;
 }
 @media(max-width:500px) {
 .background-sliders::before {
-background-image: url(/img/services/black-director-chair-max500.jpg);
+background-image: url(../img/services/black-director-chair-max500.jpg);
 }
 }
 .background-sliders > * {
@@ -2322,7 +2319,7 @@ transform: scale(0.5);
 
   }
   .item-services::before {
-    content: url(/img/icons/icon-inline.svg);
+    content: url(../img/icons/icon-inline.svg);
     display: inline-block;
     width: 20px;
     height: 20px;
