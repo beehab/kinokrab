@@ -207,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // Еффект слайду фото Home Page ----------------
 document.addEventListener("DOMContentLoaded", () => {
     const imgContainers = document.querySelectorAll("[class*='anime-box-2__img']");
-    const imgPath = "../img/sample/";
+    const imgPath = "img/sample/";
     const imgCount = 11; // кількість доступних зображень у папці
     const delay = 5000; // затримка показу фото у мілісекундах
     const transitionDuration = 0.5; // тривалість анімації у секундах
