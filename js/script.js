@@ -563,49 +563,137 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Portfolio foto page (slider) -------------------------------
+
+
+// Функція для підгрузки зображень у слайдер -------------------------------
 $(document).ready(function () {
-    const $carousel = $('.carusel-section');
-    const $items = $('.carusel-item');
-    const itemCount = $items.length;
-    let currentIndex = 0;
+    let currentCategory = '';
+    const totalImages = 5; // Кількість зображень в кожній папці (можна змінити)
 
-    // Функція для оновлення позиції слайдів
-    function updateCarousel(index) {
-        // Обчислення відступу для активного елементу
-        const offset = -index * 100;
-        $carousel.css('transform', `translateX(${offset}%)`);
+    // Функція для створення каруселі зі всіх фото в категорії
+    function loadImagesInCategory(categoryClass) {
+        currentCategory = categoryClass.replace('photo-', ''); // Отримуємо назву категорії без 'photo-'
+        let caruselContent = '';
+
+        for (let i = 1; i <= totalImages; i++) {
+            let imagePath = `portfolio/photo/photo-${currentCategory}/${i}.jpg`;
+            const categoryText = $(`.lists-carusel__text.${categoryClass}`).text(); // Отримуємо текст категорії
+            caruselContent += `
+                <div class="carusel-item">
+                    <img class="carusel-item__img" src="${imagePath}" alt="${categoryText}">
+                </div>`;
+        }
+
+        $('.carusel-section').html(caruselContent); // Додаємо всі зображення в карусель
     }
 
-    // Функція для оновлення індексу та забезпечення циклічності
-    function updateIndex(newIndex) {
-        currentIndex = (newIndex + itemCount) % itemCount;
-        updateCarousel(currentIndex);
+    // При натисканні на категорію підвантажуємо всі фото
+    $('.lists-carusel__text').click(function () {
+        const categoryClass = $(this).attr('class').split(' ')[1]; // Отримуємо клас категорії
+        loadImagesInCategory(categoryClass);
+    });
+
+    // Підвантажуємо всі фото з першої категорії при завантаженні сторінки
+    const firstCategoryClass = $('.lists-carusel__text').first().attr('class').split(' ')[1];
+    loadImagesInCategory(firstCategoryClass);
+});
+
+
+
+
+
+
+// Full Photo Modal -----------------
+$(document).ready(function () {
+    // Отримуємо елементи модального вікна
+    const $modal = $('#photoModal');
+    const $modalImg = $('#modalImage');
+    const $captionText = $('#caption');
+    const $close = $('.close');
+    const $items = $('.carusel-item img'); // Всі зображення всередині каруселі
+    let currentIndex = 0; // Індекс поточного зображення
+
+    // Функція для відкриття модального вікна з вибраним зображенням
+    function openModal(index) {
+        const src = $items.eq(index).attr('src'); // Отримуємо шлях до зображення
+        const alt = $items.eq(index).attr('alt'); // Отримуємо підпис до зображення (alt)
+
+        $modal.show(); // Показуємо модальне вікно
+        $modalImg.attr('src', src); // Встановлюємо зображення в модальне вікно
+        $captionText.text(alt); // Встановлюємо підпис до зображення
     }
 
-    // Обробка події кліку на кнопку "Наступний"
-    $('.slider-next').on('click', function () {
-        updateIndex(currentIndex + 1);
+    // Функція для зміни зображення
+    function changeImage(direction) {
+        currentIndex = (currentIndex + direction + $items.length) % $items.length;
+        openModal(currentIndex); // Оновлюємо зображення
+    }
+
+    // Клік на зображення для відкриття модального вікна
+    $items.click(function () {
+        currentIndex = $items.index(this); // Отримуємо індекс вибраного зображення
+        openModal(currentIndex); // Відкриваємо модальне вікно
     });
 
-    // Обробка події кліку на кнопку "Попередній"
-    $('.slider-prew').on('click', function () {
-        updateIndex(currentIndex - 1);
+    // Закриття модального вікна при натисканні на "X"
+    $close.click(function () {
+        $modal.hide(); // Ховаємо модальне вікно
     });
 
-    // Обробка свайпів для перемикання слайдів
-    let startX = 0;
-    $carousel.on('touchstart', function (e) {
-        startX = e.originalEvent.touches[0].clientX;
+    // Закриття модального вікна при натисканні поза зображенням
+    $modal.click(function (e) {
+        if (!$(e.target).is($modalImg)) {
+            $modal.hide(); // Закриваємо модальне вікно
+        }
     });
 
-    $carousel.on('touchmove', function (e) {
-        const moveX = e.originalEvent.touches[0].clientX;
-        const diffX = startX - moveX;
+    // Клік на кнопку "Наступний"
+    $('#fullModalNext').click(function (e) {
+        e.stopPropagation(); // Зупиняємо пропагування, щоб не закрити вікно
+        changeImage(1); // Переходимо до наступного зображення
+    });
 
-        if (diffX > 50) { // свайп вліво
-            updateIndex(currentIndex + 1);
-        } else if (diffX < -50) { // свайп вправо
-            updateIndex(currentIndex - 1);
+    // Клік на кнопку "Попередній"
+    $('#fullModalPrew').click(function (e) {
+        e.stopPropagation(); // Зупиняємо пропагування, щоб не закрити вікно
+        changeImage(-1); // Переходимо до попереднього зображення
+    });
+
+    // Підтримка свайпів на мобільних пристроях
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    // Відслідковуємо початок свайпу
+    $modal.on('touchstart', function (e) {
+        touchStartX = e.originalEvent.changedTouches[0].screenX; // Отримуємо початкову координату
+    });
+
+    // Відслідковуємо завершення свайпу
+    $modal.on('touchend', function (e) {
+        touchEndX = e.originalEvent.changedTouches[0].screenX; // Отримуємо кінцеву координату
+        handleSwipe(); // Обробляємо свайп
+    });
+
+    // Обробка свайпів
+    function handleSwipe() {
+        if (touchStartX - touchEndX > 50) {
+            // Свайп вліво (Наступне зображення)
+            changeImage(1);
+        } else if (touchEndX - touchStartX > 50) {
+            // Свайп вправо (Попереднє зображення)
+            changeImage(-1);
+        }
+    }
+
+    // Підтримка клавіш навігації (стрілки вліво/вправо)
+    $(document).keydown(function (e) {
+        if ($modal.is(':visible')) {
+            if (e.key === 'ArrowRight') {
+                changeImage(1); // Переходимо до наступного зображення
+            } else if (e.key === 'ArrowLeft') {
+                changeImage(-1); // Переходимо до попереднього зображення
+            }
         }
     });
 });
+
