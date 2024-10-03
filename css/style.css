@@ -2668,7 +2668,7 @@ object-fit: contain;
   @media (max-width:500px) {
     .background-portfolio {
     height: 40vh;
-    min-height: 184px;
+    
     padding: 20px;
     gap: 20px;
     }
@@ -2681,9 +2681,6 @@ object-fit: contain;
     width: 100%;
     height: auto;
     position: relative;
-    overflow-x: auto; /* Дозволяє горизонтальний скролінг */
-    scroll-snap-type: x mandatory; /* Сетку для плавного скролінгу */
-    -webkit-overflow-scrolling: touch; /* Підтримка свайпу на мобільних пристроях */
     transition: transform 0.5s ease;
   }
   @media (max-width:500px) {
@@ -2698,7 +2695,6 @@ object-fit: contain;
     justify-content: center;
     width: 550px;
     height: 275px;
-    scroll-snap-align: start; /* Прив'язка до початку елемента */
     transition: transform 0.5s ease;
   }
   @media (max-width:1440px) {
@@ -2716,7 +2712,7 @@ object-fit: contain;
   @media (max-width:500px) {
     .carusel-item {
     width: 200px;
-    height: 100px; 
+    height: 250px; 
     }
   }
 .carusel-item__img {
@@ -2733,7 +2729,6 @@ object-fit: cover;
   justify-content: space-around;
   align-self: flex-end;
   overflow: hidden;
-  overflow-x: auto;
   gap: 25px;
   }
   @media (max-width:500px) {
@@ -2743,10 +2738,16 @@ object-fit: cover;
   }
   .lists-carusel__text {
   font-size: clamp(16px, 4vw, 24px);
+  cursor: pointer;
   transition: all 0.3s;
   }
+  .lists-carusel__text.active {
+  color: #fd2121; 
+  transform: scale(1.05) translateY(-3px);
+  transition: all 0.3s;
+    }
   .lists-carusel__text:hover {
-  color: rgb(253, 33, 33);
+  color: #fd2121;
   transform: scale(1.05) translateY(-3px);
   transition: all 0.3s;
   }
