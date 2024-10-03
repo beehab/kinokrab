@@ -562,138 +562,187 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// Portfolio foto page (slider) -------------------------------
 
 
-// Функція для підгрузки зображень у слайдер -------------------------------
+
+
+// lists-carusel Прокрутка карусель та активна кнопка ---------------------------------
 $(document).ready(function () {
-    let currentCategory = '';
-    const totalImages = 5; // Кількість зображень в кожній папці (можна змінити)
+    const $carousel = $('.lists-carusel');
+    const $caruselSection = $('.carusel-section');
+    let isDragging = false;
+    let startX;
+    let scrollLeft;
+    let currentModalIndex = 0;
+    let imagesInCategory = [];
 
-    // Функція для створення каруселі зі всіх фото в категорії
-    function loadImagesInCategory(categoryClass) {
-        currentCategory = categoryClass.replace('photo-', ''); // Отримуємо назву категорії без 'photo-'
-        let caruselContent = '';
-
-        for (let i = 1; i <= totalImages; i++) {
-            let imagePath = `portfolio/photo/photo-${currentCategory}/${i}.jpg`;
-            const categoryText = $(`.lists-carusel__text.${categoryClass}`).text(); // Отримуємо текст категорії
-            caruselContent += `
-                <div class="carusel-item">
-                    <img class="carusel-item__img" src="${imagePath}" alt="${categoryText}">
-                </div>`;
-        }
-
-        $('.carusel-section').html(caruselContent); // Додаємо всі зображення в карусель
-    }
-
-    // При натисканні на категорію підвантажуємо всі фото
-    $('.lists-carusel__text').click(function () {
-        const categoryClass = $(this).attr('class').split(' ')[1]; // Отримуємо клас категорії
-        loadImagesInCategory(categoryClass);
+    // Для десктопу - прокрутка при утриманні миші
+    $carousel.on('mousedown', function (e) {
+        isDragging = true;
+        startX = e.pageX - $carousel.offset().left;
+        scrollLeft = $carousel.scrollLeft();
+        $carousel.addClass('dragging'); // Додаємо візуальний індикатор, якщо потрібно
     });
 
-    // Підвантажуємо всі фото з першої категорії при завантаженні сторінки
-    const firstCategoryClass = $('.lists-carusel__text').first().attr('class').split(' ')[1];
-    loadImagesInCategory(firstCategoryClass);
-});
-
-
-
-
-
-
-// Full Photo Modal -----------------
-$(document).ready(function () {
-    // Отримуємо елементи модального вікна
-    const $modal = $('#photoModal');
-    const $modalImg = $('#modalImage');
-    const $captionText = $('#caption');
-    const $close = $('.close');
-    const $items = $('.carusel-item img'); // Всі зображення всередині каруселі
-    let currentIndex = 0; // Індекс поточного зображення
-
-    // Функція для відкриття модального вікна з вибраним зображенням
-    function openModal(index) {
-        const src = $items.eq(index).attr('src'); // Отримуємо шлях до зображення
-        const alt = $items.eq(index).attr('alt'); // Отримуємо підпис до зображення (alt)
-
-        $modal.show(); // Показуємо модальне вікно
-        $modalImg.attr('src', src); // Встановлюємо зображення в модальне вікно
-        $captionText.text(alt); // Встановлюємо підпис до зображення
-    }
-
-    // Функція для зміни зображення
-    function changeImage(direction) {
-        currentIndex = (currentIndex + direction + $items.length) % $items.length;
-        openModal(currentIndex); // Оновлюємо зображення
-    }
-
-    // Клік на зображення для відкриття модального вікна
-    $items.click(function () {
-        currentIndex = $items.index(this); // Отримуємо індекс вибраного зображення
-        openModal(currentIndex); // Відкриваємо модальне вікно
+    $carousel.on('mouseleave mouseup', function () {
+        isDragging = false;
+        $carousel.removeClass('dragging');
     });
 
-    // Закриття модального вікна при натисканні на "X"
-    $close.click(function () {
-        $modal.hide(); // Ховаємо модальне вікно
+    $carousel.on('mousemove', function (e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - $carousel.offset().left;
+        const walk = (x - startX) * 2; // Швидкість прокрутки
+        $carousel.scrollLeft(scrollLeft - walk);
     });
 
-    // Закриття модального вікна при натисканні поза зображенням
-    $modal.click(function (e) {
-        if (!$(e.target).is($modalImg)) {
-            $modal.hide(); // Закриваємо модальне вікно
-        }
-    });
-
-    // Клік на кнопку "Наступний"
-    $('#fullModalNext').click(function (e) {
-        e.stopPropagation(); // Зупиняємо пропагування, щоб не закрити вікно
-        changeImage(1); // Переходимо до наступного зображення
-    });
-
-    // Клік на кнопку "Попередній"
-    $('#fullModalPrew').click(function (e) {
-        e.stopPropagation(); // Зупиняємо пропагування, щоб не закрити вікно
-        changeImage(-1); // Переходимо до попереднього зображення
-    });
-
-    // Підтримка свайпів на мобільних пристроях
+    // Для мобільних пристроїв - свайпи
     let touchStartX = 0;
     let touchEndX = 0;
 
-    // Відслідковуємо початок свайпу
-    $modal.on('touchstart', function (e) {
-        touchStartX = e.originalEvent.changedTouches[0].screenX; // Отримуємо початкову координату
+    $carousel.on('touchstart', function (e) {
+        touchStartX = e.originalEvent.touches[0].clientX;
+        scrollLeft = $carousel.scrollLeft();
     });
 
-    // Відслідковуємо завершення свайпу
-    $modal.on('touchend', function (e) {
-        touchEndX = e.originalEvent.changedTouches[0].screenX; // Отримуємо кінцеву координату
-        handleSwipe(); // Обробляємо свайп
+    $carousel.on('touchmove', function (e) {
+        touchEndX = e.originalEvent.touches[0].clientX;
+        const walk = (touchStartX - touchEndX) * 2; // Швидкість прокрутки
+        $carousel.scrollLeft(scrollLeft + walk);
     });
 
-    // Обробка свайпів
-    function handleSwipe() {
-        if (touchStartX - touchEndX > 50) {
-            // Свайп вліво (Наступне зображення)
-            changeImage(1);
-        } else if (touchEndX - touchStartX > 50) {
-            // Свайп вправо (Попереднє зображення)
-            changeImage(-1);
+    $carousel.on('touchend', function () {
+        touchStartX = 0;
+        touchEndX = 0;
+    });
+
+    // Клік на категорію, щоб зробити її активною
+    $('.lists-carusel__text').click(function () {
+        $('.lists-carusel__text').removeClass('active');
+        $(this).addClass('active');
+        const categoryClass = $(this).attr('class').split(' ')[1];
+        loadImagesInCategory(categoryClass);
+    });
+
+    function loadImagesInCategory(categoryClass) {
+        let currentCategory = categoryClass.replace('photo-', '');
+        let caruselContent = '';
+        imagesInCategory = [];
+        let totalImages = 0;
+
+        const imageFolder = `portfolio/photo/photo-${currentCategory}/`;
+        let i = 1;
+
+        function loadNextImage() {
+            const imagePath = `${imageFolder}${i}.jpg`;
+
+            $.ajax({
+                url: imagePath,
+                type: 'HEAD',
+                success: function () {
+                    const categoryText = $(`.lists-carusel__text.${categoryClass}`).text();
+                    caruselContent += `
+                        <div class="carusel-item">
+                            <img class="carusel-item__img" src="${imagePath}" alt="${categoryText}" data-index="${totalImages}">
+                        </div>`;
+                    imagesInCategory.push(imagePath); // Додаємо фото до масиву для модального вікна
+                    totalImages++;
+                    i++;
+                    loadNextImage();
+                },
+                error: function () {
+                    if (totalImages > 0) {
+                        setTimeout(() => {
+                            $('.carusel-section').html(caruselContent);
+                            moveSlider(0);
+                        }, 500);
+                    }
+                }
+            });
         }
+
+        loadNextImage();
     }
 
-    // Підтримка клавіш навігації (стрілки вліво/вправо)
-    $(document).keydown(function (e) {
-        if ($modal.is(':visible')) {
-            if (e.key === 'ArrowRight') {
-                changeImage(1); // Переходимо до наступного зображення
-            } else if (e.key === 'ArrowLeft') {
-                changeImage(-1); // Переходимо до попереднього зображення
-            }
+    const $photoModal = $('#photoModal');
+    const $modalImage = $('#modalImage');
+    const $caption = $('#caption');
+
+    // Відкриття модального вікна з великим фото
+    $(document).on('click', '.carusel-item__img', function () {
+        currentModalIndex = $(this).data('index');
+        openModal(currentModalIndex);
+    });
+
+    function openModal(index) {
+        $modalImage.attr('src', imagesInCategory[index]);
+        $photoModal.show();
+        $caption.text($(`.lists-carusel__text.active`).text());
+    }
+
+    // Закриття модального вікна
+    $('.close, #photoModal').click(function (e) {
+        if (e.target !== $modalImage[0] && e.target !== $('.button-slider-nav')[0]) {
+            $photoModal.hide();
         }
     });
+
+    // Перемикання фото в модальному вікні
+    $('#fullModalPrew').click(function () {
+        currentModalIndex = (currentModalIndex - 1 + imagesInCategory.length) % imagesInCategory.length;
+        openModal(currentModalIndex);
+    });
+
+    $('#fullModalNext').click(function () {
+        currentModalIndex = (currentModalIndex + 1) % imagesInCategory.length;
+        openModal(currentModalIndex);
+    });
+
+    // Свайп у модальному вікні
+    let startTouchX = 0;
+
+    $photoModal.on('touchstart', function (e) {
+        startTouchX = e.originalEvent.touches[0].clientX;
+    });
+
+    $photoModal.on('touchmove', function (e) {
+        let touchMoveX = e.originalEvent.touches[0].clientX;
+        if (startTouchX - touchMoveX > 50) {
+            $('#fullModalNext').click(); // Свайп вліво - наступне фото
+        } else if (startTouchX - touchMoveX < -50) {
+            $('#fullModalPrew').click(); // Свайп вправо - попереднє фото
+        }
+    });
+
+    // Реалізація слайдера
+    let currentSlideIndex = 0;
+    const $sliderItems = $('.carusel-item');
+
+    function moveSlider(index) {
+        const totalSlides = $('.carusel-item').length;
+        if (index < 0) index = totalSlides - 1;
+        if (index >= totalSlides) index = 0;
+
+        currentSlideIndex = index;
+        const offset = -currentSlideIndex * 100;
+        $caruselSection.css('transform', `translateX(${offset}%)`);
+    }
+
+    $('.slider-prew').click(function () {
+        moveSlider(currentSlideIndex - 1);
+    });
+
+    $('.slider-next').click(function () {
+        moveSlider(currentSlideIndex + 1);
+    });
+
+    // Завантажуємо першу категорію при старті
+    const firstCategoryClass = $('.lists-carusel__text').first().attr('class').split(' ')[1];
+    loadImagesInCategory(firstCategoryClass);
+    $('.lists-carusel__text').first().addClass('active');
+    moveSlider(0);
 });
+
+
 
