@@ -573,8 +573,6 @@ $(document).ready(function () {
     let isDragging = false;
     let startX;
     let scrollLeft;
-    let currentModalIndex = 0;
-    let imagesInCategory = [];
 
     // Для десктопу - прокрутка при утриманні миші
     $carousel.on('mousedown', function (e) {
@@ -619,130 +617,152 @@ $(document).ready(function () {
 
     // Клік на категорію, щоб зробити її активною
     $('.lists-carusel__text').click(function () {
+        // Видаляємо клас active з усіх елементів
         $('.lists-carusel__text').removeClass('active');
+        // Додаємо клас active до натиснутої категорії
         $(this).addClass('active');
-        const categoryClass = $(this).attr('class').split(' ')[1];
+
+        // Додатково, можна підвантажити зображення для нової категорії, як раніше
+        const categoryClass = $(this).attr('class').split(' ')[1]; // Отримуємо клас категорії
         loadImagesInCategory(categoryClass);
     });
 
+    // Функція для створення каруселі зі всіх фото в категорії
     function loadImagesInCategory(categoryClass) {
-        let currentCategory = categoryClass.replace('photo-', '');
+        let currentCategory = categoryClass.replace('photo-', ''); // Отримуємо назву категорії без 'photo-'
         let caruselContent = '';
-        imagesInCategory = [];
         let totalImages = 0;
 
+        // Шукаємо всі фотографії в категорії
         const imageFolder = `portfolio/photo/photo-${currentCategory}/`;
+
+        // Ініціалізуємо індекс фотографій
         let i = 1;
 
+        // Перевіряємо наявність фотографій поки є фото в папці
         function loadNextImage() {
             const imagePath = `${imageFolder}${i}.jpg`;
 
+            // Спроба завантажити зображення
             $.ajax({
                 url: imagePath,
                 type: 'HEAD',
                 success: function () {
-                    const categoryText = $(`.lists-carusel__text.${categoryClass}`).text();
+                    const categoryText = $(`.lists-carusel__text.${categoryClass}`).text(); // Отримуємо текст категорії
                     caruselContent += `
                         <div class="carusel-item">
-                            <img class="carusel-item__img" src="${imagePath}" alt="${categoryText}" data-index="${totalImages}">
+                            <img class="carusel-item__img" src="${imagePath}" alt="${categoryText}">
                         </div>`;
-                    imagesInCategory.push(imagePath); // Додаємо фото до масиву для модального вікна
                     totalImages++;
-                    i++;
-                    loadNextImage();
+                    i++; // Перевіряємо наступне фото
+                    loadNextImage(); // Завантажуємо наступне фото
                 },
                 error: function () {
+                    // Якщо фото не існує, завершуємо додавання
                     if (totalImages > 0) {
                         setTimeout(() => {
                             $('.carusel-section').html(caruselContent);
-                            moveSlider(0);
-                        }, 500);
+                            moveSlider(0); // Переходимо на перший слайд після завантаження
+                        }, 500); // Затримка для асинхронного завантаження
                     }
                 }
             });
         }
 
-        loadNextImage();
+        loadNextImage(); // Починаємо завантаження з першого фото
     }
 
-    const $photoModal = $('#photoModal');
-    const $modalImage = $('#modalImage');
-    const $caption = $('#caption');
+    // Завантажуємо першу категорію при завантаженні сторінки
+    const firstCategoryClass = $('.lists-carusel__text').first().attr('class').split(' ')[1];
+    loadImagesInCategory(firstCategoryClass);
+    $('.lists-carusel__text').first().addClass('active'); // Додаємо клас "active" до першої категорії
 
-    // Відкриття модального вікна з великим фото
-    $(document).on('click', '.carusel-item__img', function () {
-        currentModalIndex = $(this).data('index');
-        openModal(currentModalIndex);
-    });
-
-    function openModal(index) {
-        $modalImage.attr('src', imagesInCategory[index]);
-        $photoModal.show();
-        $caption.text($(`.lists-carusel__text.active`).text());
-    }
-
-    // Закриття модального вікна
-    $('.close, #photoModal').click(function (e) {
-        if (e.target !== $modalImage[0] && e.target !== $('.button-slider-nav')[0]) {
-            $photoModal.hide();
-        }
-    });
-
-    // Перемикання фото в модальному вікні
-    $('#fullModalPrew').click(function () {
-        currentModalIndex = (currentModalIndex - 1 + imagesInCategory.length) % imagesInCategory.length;
-        openModal(currentModalIndex);
-    });
-
-    $('#fullModalNext').click(function () {
-        currentModalIndex = (currentModalIndex + 1) % imagesInCategory.length;
-        openModal(currentModalIndex);
-    });
-
-    // Свайп у модальному вікні
-    let startTouchX = 0;
-
-    $photoModal.on('touchstart', function (e) {
-        startTouchX = e.originalEvent.touches[0].clientX;
-    });
-
-    $photoModal.on('touchmove', function (e) {
-        let touchMoveX = e.originalEvent.touches[0].clientX;
-        if (startTouchX - touchMoveX > 50) {
-            $('#fullModalNext').click(); // Свайп вліво - наступне фото
-        } else if (startTouchX - touchMoveX < -50) {
-            $('#fullModalPrew').click(); // Свайп вправо - попереднє фото
-        }
-    });
-
-    // Реалізація слайдера
+    // Реалізація для слайдера
     let currentSlideIndex = 0;
     const $sliderItems = $('.carusel-item');
+    const totalSlides = $sliderItems.length;
 
+    // Функція для перемикання слайдів
     function moveSlider(index) {
         const totalSlides = $('.carusel-item').length;
         if (index < 0) index = totalSlides - 1;
         if (index >= totalSlides) index = 0;
 
         currentSlideIndex = index;
-        const offset = -currentSlideIndex * 100;
+
+        // Визначаємо скільки потрібно прокрутити
+        const offset = -currentSlideIndex * 100; // 100% - ширина одного елемента
         $caruselSection.css('transform', `translateX(${offset}%)`);
+
+        // Центруємо фотографію в секції
+        centerMainImage(currentSlideIndex);
     }
 
+    // Функція для центрованого відображення фотографії
+    function centerMainImage(index) {
+        const $currentSlide = $sliderItems.eq(index);
+        const currentSlideWidth = $currentSlide.outerWidth();
+        const sectionWidth = $caruselSection.width();
+
+        // Обчислюємо скільки прокручувати, щоб відцентрувати фото
+        const offset = (sectionWidth - currentSlideWidth) / 2;
+        $caruselSection.scrollLeft($currentSlide.position().left - offset);
+    }
+
+    // Кнопка попереднього слайду
     $('.slider-prew').click(function () {
         moveSlider(currentSlideIndex - 1);
     });
 
+    // Кнопка наступного слайду
     $('.slider-next').click(function () {
         moveSlider(currentSlideIndex + 1);
     });
 
-    // Завантажуємо першу категорію при старті
-    const firstCategoryClass = $('.lists-carusel__text').first().attr('class').split(' ')[1];
-    loadImagesInCategory(firstCategoryClass);
-    $('.lists-carusel__text').first().addClass('active');
-    moveSlider(0);
-});
+    // Для прокрутки слайдів при натисканні миші або свайпу
+    let isSliderDragging = false;
+    let sliderStartX;
+    let sliderScrollLeft;
 
+    $caruselSection.on('mousedown', function (e) {
+        isSliderDragging = true;
+        sliderStartX = e.pageX - $caruselSection.offset().left;
+        sliderScrollLeft = $caruselSection.scrollLeft();
+    });
+
+    $caruselSection.on('mouseleave mouseup', function () {
+        isSliderDragging = false;
+    });
+
+    $caruselSection.on('mousemove', function (e) {
+        if (!isSliderDragging) return;
+        e.preventDefault();
+        const x = e.pageX - $caruselSection.offset().left;
+        const walk = (x - sliderStartX) * 2;
+        $caruselSection.scrollLeft(sliderScrollLeft - walk);
+    });
+
+    let touchSliderStartX = 0;
+    let touchSliderEndX = 0;
+
+    $caruselSection.on('touchstart', function (e) {
+        touchSliderStartX = e.originalEvent.touches[0].clientX;
+    });
+
+    $caruselSection.on('touchmove', function (e) {
+        touchSliderEndX = e.originalEvent.touches[0].clientX;
+        const walk = (touchSliderStartX - touchSliderEndX) * 2;
+        $caruselSection.scrollLeft(sliderScrollLeft + walk);
+    });
+
+    $caruselSection.on('touchend', function () {
+        const walk = touchSliderStartX - touchSliderEndX;
+        if (walk > 50) moveSlider(currentSlideIndex + 1); // Якщо свайп вправо
+        if (walk < -50) moveSlider(currentSlideIndex - 1); // Якщо свайп вліво
+    });
+
+    // Завантаження першого слайду при старті
+    moveSlider(currentSlideIndex);
+});
 
 
