@@ -615,7 +615,9 @@ const currentCategory = urlParams.get('category') || 'star'; // За замов�
 // Виклик функції для завантаження зображень при першому завантаженні сторінки
 loadImages(currentCategory);
 
-//
+// Обробник події для зміни розміру вікна
+window.addEventListener('resize', adjustGridsForScreenSize);
+
 
 
 
