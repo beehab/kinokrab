@@ -139,144 +139,6 @@ document.addEventListener('DOMContentLoaded', function () {
     overlay.addEventListener('click', closeModal);
 });
 
-// Єффект підбору тексту Home Page ----------------------
-document.addEventListener("DOMContentLoaded", () => {
-    const texts = document.querySelectorAll(".text p");
-    const alphabet = " абвгґдеєжзиіїйклмнопрстуфхцчшщьюя"; // українська абетка + пробіл
-    const interval = 30; // мілісекунди між кожною зміною букви (збільшили для плавності)
-    const delay = 600; // затримка перед початком ефекту у мілісекундах
-
-    const textSequences = [
-        ["Професіоналізм", "Позитивні\nвідгуки", "Сучасне\nобладнання"],
-        ["Креативність", "Орієнтація\nна клієнта", "Комплексний\nпідхід"],
-        ["Досвід", "Постійний\nрозвиток", "Персональні\nконсультації"]
-    ];
-
-    function getRandomChar() {
-        return alphabet[Math.floor(Math.random() * alphabet.length)];
-    }
-
-    function animateText(element, textIndex, callback) {
-        const targetString = textSequences[textIndex][1]; // Починаємо з другої фрази
-        let lines = targetString.split("\n");
-        let currentString = lines.map(line => Array(line.length).fill(""));
-
-        let index = 0;
-
-        const intervalId = setInterval(() => {
-            currentString = currentString.map((line, lineIndex) => {
-                return line.map((char, charIndex) => {
-                    if (charIndex < index) {
-                        return lines[lineIndex][charIndex];
-                    } else {
-                        return getRandomChar();
-                    }
-                });
-            });
-
-            element.innerHTML = currentString.map(line => line.join("")).join("<br>");
-
-            if (index >= Math.max(...lines.map(line => line.length))) {
-                clearInterval(intervalId);
-                setTimeout(() => {
-                    textSequences[textIndex].push(textSequences[textIndex].shift());
-                    if (callback) callback();
-                }, delay);
-            } else {
-                index++;
-            }
-        }, interval);
-    }
-
-    function startSequentialAnimation(index = 0) {
-        if (index >= texts.length) {
-            setTimeout(() => startSequentialAnimation(0), delay); // повторюємо анімацію для всіх елементів після завершення
-            return;
-        }
-
-        // Змінюємо першу фразу одразу на другу
-        texts[index].innerHTML = textSequences[index][0].replace('\n', '<br>');
-        setTimeout(() => {
-            animateText(texts[index], index, () => startSequentialAnimation(index + 1));
-        }, delay);
-    }
-
-    setTimeout(() => startSequentialAnimation(), delay);
-});
-
-// Еффект слайду фото Home Page ----------------
-document.addEventListener("DOMContentLoaded", () => {
-    const imgContainers = document.querySelectorAll("[class*='anime-box-2__img']");
-    const imgPath = "img/sample/";
-    const imgCount = 11; // кількість доступних зображень у папці
-    const delay = 5000; // затримка показу фото у мілісекундах
-    const transitionDuration = 0.5; // тривалість анімації у секундах
-
-    // Індекси зображень
-    let availableIndices = Array.from({ length: imgCount }, (_, i) => i + 1);
-
-    function getRandomUniqueImageIndex(usedIndices) {
-        let remainingIndices = availableIndices.filter(index => !usedIndices.includes(index));
-        if (remainingIndices.length === 0) {
-            remainingIndices = Array.from({ length: imgCount }, (_, i) => i + 1);
-        }
-        const randomIndex = Math.floor(Math.random() * remainingIndices.length);
-        return remainingIndices[randomIndex];
-    }
-
-    function createImageElement(src) {
-        const img = document.createElement("img");
-        img.src = src;
-        img.style.width = "100%";
-        img.style.height = "auto";
-        img.style.objectFit = "contain";
-        img.style.position = "absolute";
-        img.style.transform = "translateY(100%)"; // Початкове розташування зображення знизу
-        img.style.transition = `transform ${transitionDuration}s ease-in-out`;
-        return img;
-    }
-
-    function changeImages() {
-        const usedIndices = [];
-        imgContainers.forEach(container => {
-            const oldImg = container.querySelector("img");
-            const newIndex = getRandomUniqueImageIndex(usedIndices);
-            usedIndices.push(newIndex);
-            const newSrc = `${imgPath}${newIndex}.png`;
-            const newImg = createImageElement(newSrc);
-
-            // Додаємо нове зображення до контейнера
-            container.appendChild(newImg);
-
-            // Починаємо анімацію
-            setTimeout(() => {
-                newImg.style.transform = "translateY(0)";
-                oldImg.style.transform = "translateY(-100%)";
-            }, 50); // Невелика затримка для плавного показу
-
-            // Видаляємо старе зображення після завершення анімації
-            setTimeout(() => {
-                container.removeChild(oldImg);
-            }, transitionDuration * 1000);
-        });
-
-        // Запускаємо наступну зміну зображень через delay
-        setTimeout(changeImages, delay + transitionDuration * 1000);
-    }
-
-    // Завантаження початкових зображень
-    imgContainers.forEach(container => {
-        const randomIndex = getRandomUniqueImageIndex([]);
-        const src = `${imgPath}${randomIndex}.png`;
-        const img = createImageElement(src);
-        img.style.transform = "translateY(0)";
-        container.appendChild(img);
-    });
-
-    // Запуск анімації після початкової затримки
-    setTimeout(changeImages, delay);
-});
-
 // FAQ - droprown----------
 document.querySelectorAll('.dropdown__question').forEach((item) => {
     item.addEventListener('click', () => {
@@ -562,207 +424,199 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+// Page Photo Category ------------------------------------
+// Ваша існуюча функція loadImages
+function loadImages(category) {
+    const folderPath = `portfolio/photo/photo-${category}/`;
+    let grids = document.querySelectorAll('.lists-card');
 
-
-
-
-// lists-carusel Прокрутка карусель та активна кнопка ---------------------------------
-$(document).ready(function () {
-    const $carousel = $('.lists-carusel');
-    const $caruselSection = $('.carusel-section');
-    let isDragging = false;
-    let startX;
-    let scrollLeft;
-
-    // Для десктопу - прокрутка при утриманні миші
-    $carousel.on('mousedown', function (e) {
-        isDragging = true;
-        startX = e.pageX - $carousel.offset().left;
-        scrollLeft = $carousel.scrollLeft();
-        $carousel.addClass('dragging'); // Додаємо візуальний індикатор, якщо потрібно
+    // Очищаємо кожну сітку перед завантаженням
+    grids.forEach(grid => {
+        grid.innerHTML = ''; // Очищаємо контент сіток
     });
 
-    $carousel.on('mouseleave mouseup', function () {
-        isDragging = false;
-        $carousel.removeClass('dragging');
-    });
+    let imageIndex = 1;
+    let gridIndex = 0;
+    const loadedImages = []; // Масив для збереження завантажених зображень
 
-    $carousel.on('mousemove', function (e) {
-        if (!isDragging) return;
-        e.preventDefault();
-        const x = e.pageX - $carousel.offset().left;
-        const walk = (x - startX) * 2; // Швидкість прокрутки
-        $carousel.scrollLeft(scrollLeft - walk);
-    });
+    // Функція для перевірки існування зображення
+    function checkImageExistence(imgSrc, callback) {
+        const img = new Image();
+        img.onload = function() {
+            callback(true);  // Зображення існує
+        };
+        img.onerror = function() {
+            callback(false); // Зображення не існує
+        };
+        img.src = imgSrc;
+    }
 
-    // Для мобільних пристроїв - свайпи
-    let touchStartX = 0;
-    let touchEndX = 0;
+    // Рекурсивно перевіряємо зображення
+    function loadNextImage() {
+        const imgSrc = `${folderPath}${imageIndex}.jpg`;
 
-    $carousel.on('touchstart', function (e) {
-        touchStartX = e.originalEvent.touches[0].clientX;
-        scrollLeft = $carousel.scrollLeft();
-    });
+        checkImageExistence(imgSrc, function(exists) {
+            if (exists) {
+                // Зберігаємо зображення у масив
+                loadedImages.push(imgSrc);
 
-    $carousel.on('touchmove', function (e) {
-        touchEndX = e.originalEvent.touches[0].clientX;
-        const walk = (touchStartX - touchEndX) * 2; // Швидкість прокрутки
-        $carousel.scrollLeft(scrollLeft + walk);
-    });
+                // Змінюємо індекс фото та сітки
+                imageIndex++;
+                gridIndex = (gridIndex + 1) % grids.length;  // Переходимо до наступної сітки циклічно
+                
+                // Завантажуємо наступне зображення
+                loadNextImage();
+            } else {
+                // Якщо більше немає зображень, відображаємо завантажені в зворотному порядку
+                displayImagesInReverseOrder();
+            }
+        });
+    }
 
-    $carousel.on('touchend', function () {
-        touchStartX = 0;
-        touchEndX = 0;
-    });
+    // Функція для відображення зображень у зворотному порядку
+    function displayImagesInReverseOrder() {
+        for (let i = loadedImages.length - 1; i >= 0; i--) {
+            const imgElement = document.createElement('img');
+            imgElement.classList.add('item__img-card');
+            imgElement.src = loadedImages[i];
+            imgElement.alt = `Категорія ${category} фото ${loadedImages.length - i}`; // Змінено для правильного нумерування
 
-    // Клік на категорію, щоб зробити її активною
-    $('.lists-carusel__text').click(function () {
-        // Видаляємо клас active з усіх елементів
-        $('.lists-carusel__text').removeClass('active');
-        // Додаємо клас active до натиснутої категорії
-        $(this).addClass('active');
-
-        // Додатково, можна підвантажити зображення для нової категорії, як раніше
-        const categoryClass = $(this).attr('class').split(' ')[1]; // Отримуємо клас категорії
-        loadImagesInCategory(categoryClass);
-    });
-
-    // Функція для створення каруселі зі всіх фото в категорії
-    function loadImagesInCategory(categoryClass) {
-        let currentCategory = categoryClass.replace('photo-', ''); // Отримуємо назву категорії без 'photo-'
-        let caruselContent = '';
-        let totalImages = 0;
-
-        // Шукаємо всі фотографії в категорії
-        const imageFolder = `portfolio/photo/photo-${currentCategory}/`;
-
-        // Ініціалізуємо індекс фотографій
-        let i = 1;
-
-        // Перевіряємо наявність фотографій поки є фото в папці
-        function loadNextImage() {
-            const imagePath = `${imageFolder}${i}.jpg`;
-
-            // Спроба завантажити зображення
-            $.ajax({
-                url: imagePath,
-                type: 'HEAD',
-                success: function () {
-                    const categoryText = $(`.lists-carusel__text.${categoryClass}`).text(); // Отримуємо текст категорії
-                    caruselContent += `
-                        <div class="carusel-item">
-                            <img class="carusel-item__img" src="${imagePath}" alt="${categoryText}">
-                        </div>`;
-                    totalImages++;
-                    i++; // Перевіряємо наступне фото
-                    loadNextImage(); // Завантажуємо наступне фото
-                },
-                error: function () {
-                    // Якщо фото не існує, завершуємо додавання
-                    if (totalImages > 0) {
-                        setTimeout(() => {
-                            $('.carusel-section').html(caruselContent);
-                            moveSlider(0); // Переходимо на перший слайд після завантаження
-                        }, 500); // Затримка для асинхронного завантаження
-                    }
-                }
+            // Додаємо обробник події для відкриття модального вікна
+            imgElement.addEventListener('click', () => {
+                openModal(i); // Виклик функції відкриття модального вікна з індексом
             });
+
+            // Створюємо обгортку для фото
+            const listItem = document.createElement('li');
+            listItem.classList.add('item__card', 'item');
+            listItem.appendChild(imgElement);
+
+            // Додаємо фото в поточну сітку
+            grids[gridIndex].appendChild(listItem);
+            gridIndex = (gridIndex + 1) % grids.length; // Циклічно додаємо до сіток
         }
-
-        loadNextImage(); // Починаємо завантаження з першого фото
     }
 
-    // Завантажуємо першу категорію при завантаженні сторінки
-    const firstCategoryClass = $('.lists-carusel__text').first().attr('class').split(' ')[1];
-    loadImagesInCategory(firstCategoryClass);
-    $('.lists-carusel__text').first().addClass('active'); // Додаємо клас "active" до першої категорії
+    // Функція для відкриття модального вікна
+    let currentImageIndex = 0; // Індекс поточного зображення
 
-    // Реалізація для слайдера
-    let currentSlideIndex = 0;
-    const $sliderItems = $('.carusel-item');
-    const totalSlides = $sliderItems.length;
+    function openModal(index) {
+        const photoModal = document.getElementById('photoModal');
+        const modalImage = document.getElementById('modalImage');
+        
+        modalImage.src = loadedImages[index]; // Встановлюємо зображення у модалі
+        currentImageIndex = index; // Зберігаємо індекс поточного зображення
+        photoModal.style.display = 'block'; // Показуємо модальне вікно
 
-    // Функція для перемикання слайдів
-    function moveSlider(index) {
-        const totalSlides = $('.carusel-item').length;
-        if (index < 0) index = totalSlides - 1;
-        if (index >= totalSlides) index = 0;
-
-        currentSlideIndex = index;
-
-        // Визначаємо скільки потрібно прокрутити
-        const offset = -currentSlideIndex * 100; // 100% - ширина одного елемента
-        $caruselSection.css('transform', `translateX(${offset}%)`);
-
-        // Центруємо фотографію в секції
-        centerMainImage(currentSlideIndex);
+        // Додаємо обробники подій для свайпа
+        setupSwipeHandlers();
     }
 
-    // Функція для центрованого відображення фотографії
-    function centerMainImage(index) {
-        const $currentSlide = $sliderItems.eq(index);
-        const currentSlideWidth = $currentSlide.outerWidth();
-        const sectionWidth = $caruselSection.width();
+    // Функції для навігації у модальному вікні
+    document.getElementById('fullModalPrew').onclick = function() {
+        currentImageIndex = (currentImageIndex - 1 + loadedImages.length) % loadedImages.length; // Наступне зображення
+        document.getElementById('modalImage').src = loadedImages[currentImageIndex]; // Змінюємо зображення у модалі
+    };
 
-        // Обчислюємо скільки прокручувати, щоб відцентрувати фото
-        const offset = (sectionWidth - currentSlideWidth) / 2;
-        $caruselSection.scrollLeft($currentSlide.position().left - offset);
+    document.getElementById('fullModalNext').onclick = function() {
+        currentImageIndex = (currentImageIndex + 1) % loadedImages.length; // Попереднє зображення
+        document.getElementById('modalImage').src = loadedImages[currentImageIndex]; // Змінюємо зображення у модалі
+    };
+
+    // Додаємо обробники подій для свайпа
+    let startX, endX;
+
+    function setupSwipeHandlers() {
+        const photoModal = document.getElementById('photoModal');
+
+        photoModal.addEventListener('touchstart', function(event) {
+            startX = event.touches[0].clientX; // Зберігаємо початкову позицію
+        });
+
+        photoModal.addEventListener('touchmove', function(event) {
+            endX = event.touches[0].clientX; // Зберігаємо кінцеву позицію
+        });
+
+        photoModal.addEventListener('touchend', function() {
+            if (startX > endX + 50) {
+                // Якщо свайп вліво
+                document.getElementById('fullModalNext').click(); // Виклик функції переходу на наступне зображення
+            } else if (startX + 50 < endX) {
+                // Якщо свайп вправо
+                document.getElementById('fullModalPrew').click(); // Виклик функції переходу на попереднє зображення
+            }
+        });
     }
 
-    // Кнопка попереднього слайду
-    $('.slider-prew').click(function () {
-        moveSlider(currentSlideIndex - 1);
+    // Функція для закриття модального вікна
+    function closeModal() {
+        const photoModal = document.getElementById('photoModal');
+        photoModal.style.display = 'none'; // Ховаємо модальне вікно
+    }
+
+    document.querySelector('.close').onclick = closeModal; // Обробник закриття модального вікна
+
+    // Додаємо обробник події для закриття модального вікна при натисканні клавіші Esc
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') { // Перевірка на клавішу Esc
+            closeModal(); // Виклик функції закриття
+        }
     });
 
-    // Кнопка наступного слайду
-    $('.slider-next').click(function () {
-        moveSlider(currentSlideIndex + 1);
-    });
+    // Починаємо завантаження зображень
+    loadNextImage();
+}
 
-    // Для прокрутки слайдів при натисканні миші або свайпу
-    let isSliderDragging = false;
-    let sliderStartX;
-    let sliderScrollLeft;
+// Функція для зміни сітки в залежності від розміру екрану
+function adjustGridsForScreenSize() {
+    const screenWidth = window.innerWidth;
+    const allGrids = document.querySelectorAll('.lists-card');
 
-    $caruselSection.on('mousedown', function (e) {
-        isSliderDragging = true;
-        sliderStartX = e.pageX - $caruselSection.offset().left;
-        sliderScrollLeft = $caruselSection.scrollLeft();
-    });
+    if (screenWidth < 1024 && allGrids.length === 3) {
+        // Видаляємо третю сітку
+        const thirdGrid = allGrids[2];
+        thirdGrid.remove();
+        
+        // Перезавантажуємо фото з перерозподілом на дві сітки
+        loadImages(currentCategory);
+    } else if (screenWidth >= 1024 && allGrids.length < 3) {
+        // Якщо екран ширший за 1024 і сіток менше 3, додаємо третю сітку і перезавантажуємо
+        const wrapGrids = document.querySelector('.wrap-grids');
+        const newGrid = document.createElement('ul');
+        newGrid.classList.add('lists-card');
+        wrapGrids.appendChild(newGrid);
+        
+        // Перезавантажуємо фото на три сітки
+        loadImages(currentCategory);
+    }
+    if (screenWidth < 768 && allGrids.length === 2) {
+        // Видаляємо третю сітку
+        const thirdGrid = allGrids[1];
+        thirdGrid.remove();
+        
+        // Перезавантажуємо фото з перерозподілом на дві сітки
+        loadImages(currentCategory);
+    } else if (screenWidth >= 768 && allGrids.length < 2) {
+        // Якщо екран ширший за 768 і сіток менше 2, додаємо другу сітку і перезавантажуємо
+        const wrapGrids = document.querySelector('.wrap-grids');
+        const newGrid = document.createElement('ul');
+        newGrid.classList.add('lists-card');
+        wrapGrids.appendChild(newGrid);
+        
+        // Перезавантажуємо фото на дві сітки
+        loadImages(currentCategory);
+    }
+}
 
-    $caruselSection.on('mouseleave mouseup', function () {
-        isSliderDragging = false;
-    });
+// Отримуємо параметр категорії з URL
+const urlParams = new URLSearchParams(window.location.search);
+const currentCategory = urlParams.get('category') || 'star'; // За замовчуванням 'star'
 
-    $caruselSection.on('mousemove', function (e) {
-        if (!isSliderDragging) return;
-        e.preventDefault();
-        const x = e.pageX - $caruselSection.offset().left;
-        const walk = (x - sliderStartX) * 2;
-        $caruselSection.scrollLeft(sliderScrollLeft - walk);
-    });
+// Виклик функції для завантаження зображень при першому завантаженні сторінки
+loadImages(currentCategory);
 
-    let touchSliderStartX = 0;
-    let touchSliderEndX = 0;
+//
 
-    $caruselSection.on('touchstart', function (e) {
-        touchSliderStartX = e.originalEvent.touches[0].clientX;
-    });
 
-    $caruselSection.on('touchmove', function (e) {
-        touchSliderEndX = e.originalEvent.touches[0].clientX;
-        const walk = (touchSliderStartX - touchSliderEndX) * 2;
-        $caruselSection.scrollLeft(sliderScrollLeft + walk);
-    });
-
-    $caruselSection.on('touchend', function () {
-        const walk = touchSliderStartX - touchSliderEndX;
-        if (walk > 50) moveSlider(currentSlideIndex + 1); // Якщо свайп вправо
-        if (walk < -50) moveSlider(currentSlideIndex - 1); // Якщо свайп вліво
-    });
-
-    // Завантаження першого слайду при старті
-    moveSlider(currentSlideIndex);
-});
 
 
