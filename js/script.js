@@ -442,10 +442,10 @@ function loadImages(category) {
     // Функція для перевірки існування зображення
     function checkImageExistence(imgSrc, callback) {
         const img = new Image();
-        img.onload = function() {
+        img.onload = function () {
             callback(true);  // Зображення існує
         };
-        img.onerror = function() {
+        img.onerror = function () {
             callback(false); // Зображення не існує
         };
         img.src = imgSrc;
@@ -453,9 +453,9 @@ function loadImages(category) {
 
     // Рекурсивно перевіряємо зображення
     function loadNextImage() {
-        const imgSrc = `${folderPath}${imageIndex}.jpg`;
+        const imgSrc = `${folderPath}${imageIndex}.webp`;
 
-        checkImageExistence(imgSrc, function(exists) {
+        checkImageExistence(imgSrc, function (exists) {
             if (exists) {
                 // Зберігаємо зображення у масив
                 loadedImages.push(imgSrc);
@@ -463,7 +463,7 @@ function loadImages(category) {
                 // Змінюємо індекс фото та сітки
                 imageIndex++;
                 gridIndex = (gridIndex + 1) % grids.length;  // Переходимо до наступної сітки циклічно
-                
+
                 // Завантажуємо наступне зображення
                 loadNextImage();
             } else {
@@ -503,7 +503,7 @@ function loadImages(category) {
     function openModal(index) {
         const photoModal = document.getElementById('photoModal');
         const modalImage = document.getElementById('modalImage');
-        
+
         modalImage.src = loadedImages[index]; // Встановлюємо зображення у модалі
         currentImageIndex = index; // Зберігаємо індекс поточного зображення
         photoModal.style.display = 'block'; // Показуємо модальне вікно
@@ -513,12 +513,12 @@ function loadImages(category) {
     }
 
     // Функції для навігації у модальному вікні
-    document.getElementById('fullModalPrew').onclick = function() {
+    document.getElementById('fullModalNext').onclick = function () {
         currentImageIndex = (currentImageIndex - 1 + loadedImages.length) % loadedImages.length; // Наступне зображення
         document.getElementById('modalImage').src = loadedImages[currentImageIndex]; // Змінюємо зображення у модалі
     };
 
-    document.getElementById('fullModalNext').onclick = function() {
+    document.getElementById('fullModalPrew').onclick = function () {
         currentImageIndex = (currentImageIndex + 1) % loadedImages.length; // Попереднє зображення
         document.getElementById('modalImage').src = loadedImages[currentImageIndex]; // Змінюємо зображення у модалі
     };
@@ -529,15 +529,15 @@ function loadImages(category) {
     function setupSwipeHandlers() {
         const photoModal = document.getElementById('photoModal');
 
-        photoModal.addEventListener('touchstart', function(event) {
+        photoModal.addEventListener('touchstart', function (event) {
             startX = event.touches[0].clientX; // Зберігаємо початкову позицію
         });
 
-        photoModal.addEventListener('touchmove', function(event) {
+        photoModal.addEventListener('touchmove', function (event) {
             endX = event.touches[0].clientX; // Зберігаємо кінцеву позицію
         });
 
-        photoModal.addEventListener('touchend', function() {
+        photoModal.addEventListener('touchend', function () {
             if (startX > endX + 50) {
                 // Якщо свайп вліво
                 document.getElementById('fullModalNext').click(); // Виклик функції переходу на наступне зображення
@@ -557,7 +557,7 @@ function loadImages(category) {
     document.querySelector('.close').onclick = closeModal; // Обробник закриття модального вікна
 
     // Додаємо обробник події для закриття модального вікна при натисканні клавіші Esc
-    document.addEventListener('keydown', function(event) {
+    document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') { // Перевірка на клавішу Esc
             closeModal(); // Виклик функції закриття
         }
@@ -576,7 +576,7 @@ function adjustGridsForScreenSize() {
         // Видаляємо третю сітку
         const thirdGrid = allGrids[2];
         thirdGrid.remove();
-        
+
         // Перезавантажуємо фото з перерозподілом на дві сітки
         loadImages(currentCategory);
     } else if (screenWidth >= 1024 && allGrids.length < 3) {
@@ -585,7 +585,7 @@ function adjustGridsForScreenSize() {
         const newGrid = document.createElement('ul');
         newGrid.classList.add('lists-card');
         wrapGrids.appendChild(newGrid);
-        
+
         // Перезавантажуємо фото на три сітки
         loadImages(currentCategory);
     }
@@ -593,7 +593,7 @@ function adjustGridsForScreenSize() {
         // Видаляємо третю сітку
         const thirdGrid = allGrids[1];
         thirdGrid.remove();
-        
+
         // Перезавантажуємо фото з перерозподілом на дві сітки
         loadImages(currentCategory);
     } else if (screenWidth >= 768 && allGrids.length < 2) {
@@ -602,7 +602,7 @@ function adjustGridsForScreenSize() {
         const newGrid = document.createElement('ul');
         newGrid.classList.add('lists-card');
         wrapGrids.appendChild(newGrid);
-        
+
         // Перезавантажуємо фото на дві сітки
         loadImages(currentCategory);
     }
@@ -618,6 +618,83 @@ loadImages(currentCategory);
 // Обробник події для зміни розміру вікна
 window.addEventListener('resize', adjustGridsForScreenSize);
 
+//  portfolio-video -----------------------------------------------
+// Оновлений об'єкт з відео для кожної категорії
+const videosByCategory = {
+    'video-star': [
+        'https://www.youtube.com/embed/GCKOoFiWHi4',
+        'https://www.youtube.com/embed/eurU16W2quc',
+        'https://www.youtube.com/embed/I84lyBkGr1w'
+    ],
+    'video-concerts': [
+        'https://www.youtube.com/embed/I84lyBkGr1w',
+        'https://www.youtube.com/embed/eurU16W2quc'
+    ],
+    'video-family': [
+        'https://www.youtube.com/embed/GCKOoFiWHi4'
+    ],
+    'video-wedding': [
+        'https://www.youtube.com/embed/mQT3jMUNbbk',
+        'https://www.youtube.com/embed/Z4fyzmA96p0',
+        'https://www.youtube.com/embed/jLyHTmR1sKg'
+    ],
+    'video-sessions': [
+        'https://www.youtube.com/embed/GCKOoFiWHi4'
+    ],
+    'video-sport': [
+        'https://www.youtube.com/embed/I84lyBkGr1w',
+        'https://www.youtube.com/embed/eurU16W2quc'
+    ],
+    'video-activities': [
+        'https://www.youtube.com/embed/GCKOoFiWHi4'
+    ],
+    'video-business': [
+        'https://www.youtube.com/embed/GCKOoFiWHi4',
+        'https://www.youtube.com/embed/a-8roivl1Rs',
+        'https://www.youtube.com/embed/AhO-wsyjhlA',
+        'https://www.youtube.com/embed/dKEAphAeyFk',
+        'https://www.youtube.com/embed/8meE8TRoPL0'
+    ]
+};
+
+// Функція для отримання параметра "category" з URL
+function getCategoryFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('category');
+}
+
+// Функція для завантаження відео для відповідної категорії
+function loadVideosForCategory(category) {
+    const videoList = document.getElementById('video-list');
+    const videos = videosByCategory[category];
+
+    if (videos) {
+        // Очищуємо список перед завантаженням нових відео
+        videoList.innerHTML = '';
+
+        // Генеруємо відео елементи
+        videos.forEach(videoUrl => {
+            const listItem = document.createElement('li');
+            listItem.classList.add('item-card--video');
+            
+            const iframe = document.createElement('iframe');
+            iframe.src = videoUrl;
+            iframe.setAttribute('frameborder', '0');
+            iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+            iframe.setAttribute('allowfullscreen', true);
+
+            listItem.appendChild(iframe);
+            videoList.appendChild(listItem);
+        });
+    } else {
+        // Якщо категорія не знайдена
+        videoList.innerHTML = '<p>Відео для цієї категорії відсутні.</p>';
+    }
+}
+
+// Отримуємо категорію з URL і завантажуємо відповідні відео
+const category = getCategoryFromUrl();
+loadVideosForCategory(category);
 
 
 
