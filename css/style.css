@@ -808,8 +808,8 @@ h2.subtitle-home-page {
   border-radius: 20px;
   background: linear-gradient(180deg, #9747FF 0%, #2A0062 100%);
   overflow: hidden;
-  /* z-index: 0; */
   transition: all 0.3s;
+  z-index: 1;
 }
 
 .button-home-page::before {
@@ -823,14 +823,13 @@ h2.subtitle-home-page {
   background: white;
   transform: scale(0);
   transform-origin: top left;
-  /* Початок трансформації з верхнього лівого кута */
   transition: all 0.3s;
-  z-index: -1;
 }
 
 .button-home-page:hover::before {
   transform: scale(1.5);
   transition: 0.5s;
+  z-index: -1;
 }
 
 .button-home-page:hover {
@@ -1162,7 +1161,6 @@ h2.subtitle-home-page {
 
 [class*="modal-contacts__link"]:hover {
   text-decoration: underline;
-  font-weight: 600;
 }
 
 .modal-contacts__link-vib {
@@ -1468,7 +1466,7 @@ h2.subtitle-home-page {
 
 [class*="footer__link"]:hover {
   text-decoration: underline;
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
 .footer__link-vib {
@@ -1530,6 +1528,8 @@ h2.subtitle-home-page {
   height: 30px;
   margin-right: 10px;
 }
+
+.footer__link-partner {}
 
 /* FAQ-page------------------- */
 .wrap-background {
@@ -3003,42 +3003,57 @@ h2.subtitle-home-page {
   justify-content: center;
   width: 100%;
   height: 100%;
-  background-color: #ffffffdd;
+  background-color: #00000064;
   opacity: 0;
   transition: all 0.3s ease-in-out;
+}
+
+.category-bg:hover {
+  opacity: 0.8;
 }
 
 .name-category {
   font-size: clamp(20px, 3vw, 25px);
   font-weight: 800;
-  color: black;
+  color: rgb(255, 255, 255);
+  top: 0;
   transform: translateY(0);
   opacity: 1;
   transition: all 0.3s ease-in-out;
 }
 
-@media (min-width:500px) {
-  .category-bg:hover .name-category {
-    opacity: 1;
-    transform: translateY(40%);
-  }
-
-  .category-bg:hover {
-    opacity: 0.8;
-  }
+.category-bg:hover .name-category {
+  opacity: 1;
+  top: 50%;
+  transform: translateY(40%);
 }
+
 
 @media (max-width:500px) {
   .category-bg {
+    top: 100%;
+    transform: translateY(-100%);
     background-color: #ffffff00;
     opacity: 1;
+    width: 100%;
+    height: auto;
+
   }
 
   .name-category {
-    opacity: 1;
-    background-color: #ffffff9e;
+    display: flex;
+    justify-content: center;
+    color: white;
+    background-color: #00000044;
     padding: clamp(5px, 2vw, 20px) clamp(20px, 1vw, 40px);
-    border-radius: clamp(5px, 2vw, 15px);
+    width: 100%;
+    height: 100%;
+  }
+
+  .category-bg:hover .name-category {
+    opacity: initial;
+    top: initial;
+    transform: initial;
   }
 }
 
@@ -3046,6 +3061,13 @@ h2.subtitle-home-page {
 .wrap-grids {
   display: flex;
   gap: 40px;
+}
+
+@media (max-width:767px) {
+  .wrap-grids {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 
 .lists-card {
