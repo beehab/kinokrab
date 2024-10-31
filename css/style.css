@@ -3003,13 +3003,13 @@ h2.subtitle-home-page {
   justify-content: center;
   width: 100%;
   height: 100%;
-  background-color: #00000064;
+  background-color: #00000094;
   opacity: 0;
   transition: all 0.3s ease-in-out;
 }
 
 .category-bg:hover {
-  opacity: 0.8;
+  opacity: 1;
 }
 
 .name-category {
