@@ -1,3 +1,4 @@
+
 // bottom-section__menu ----------------------
 $(document).ready(function ($) {
     "use strict";
@@ -110,6 +111,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const openButton = document.querySelector('.button-home-page');
     const closeButtons = document.querySelectorAll('.form__button, .modal__close');
 
+    if (!modal || !overlay || !openButton || !closeButtons.length) {
+        return;
+    }
+
     function openModal() {
         modal.style.display = 'block';
         overlay.style.display = 'block';
@@ -159,11 +164,15 @@ document.querySelectorAll('.dropdown__question').forEach((item) => {
 document.addEventListener('DOMContentLoaded', function () {
     const items = document.querySelectorAll('.item-tech');
     const mainSlideContainer = document.querySelector('.box-tech__slides');
-    const mainSlideImage = mainSlideContainer.querySelector('.img-tech');
-    const mainSlideName = mainSlideContainer.querySelector('.name-tech');
+    const mainSlideImage = mainSlideContainer?.querySelector('.img-tech');
+    const mainSlideName = mainSlideContainer?.querySelector('.name-tech');
     const buttonPrev = document.querySelector('.button-prew');
     const buttonNext = document.querySelector('.button-next');
     let currentIndex = 0;
+
+    if (!items.length || !mainSlideContainer || !mainSlideImage || !mainSlideName || !buttonPrev || !buttonNext) {
+        return;
+    }
 
     function updateMainSlide(index) {
         const imgSrc = items[index].querySelector('.img-tech').src;
@@ -209,6 +218,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     updateMainSlide(0);
 });
+
 
 
 //  modal-review --------------------------------------------
@@ -293,61 +303,69 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextButton1 = document.querySelector('.button-next');
     let currentIndex1 = 0;
 
-    function updateSlider1Position() {
-        const offset = -currentIndex1 * 100;
-        slides1.forEach(slide => {
-            slide.style.transform = `translateX(${offset}%)`;
+    // Перевірка, чи всі елементи першого слайдера присутні
+    if (slider1 && slides1.length > 0 && prevButton1 && nextButton1) {
+        function updateSlider1Position() {
+            const offset = -currentIndex1 * 100;
+            slides1.forEach(slide => {
+                slide.style.transform = `translateX(${offset}%)`;
+            });
+        }
+
+        nextButton1.addEventListener('click', () => {
+            currentIndex1 = (currentIndex1 < slides1.length - 1) ? currentIndex1 + 1 : 0;
+            updateSlider1Position();
         });
+
+        prevButton1.addEventListener('click', () => {
+            currentIndex1 = (currentIndex1 > 0) ? currentIndex1 - 1 : slides1.length - 1;
+            updateSlider1Position();
+        });
+
+        updateSlider1Position();
     }
 
-    nextButton1.addEventListener('click', () => {
-        currentIndex1 = (currentIndex1 < slides1.length - 1) ? currentIndex1 + 1 : 0;
-        updateSlider1Position();
-    });
-
-    prevButton1.addEventListener('click', () => {
-        currentIndex1 = (currentIndex1 > 0) ? currentIndex1 - 1 : slides1.length - 1;
-        updateSlider1Position();
-    });
-
-    updateSlider1Position();
-
-    // Другий слайдер
+    // Review слайдер
     const slides2 = document.querySelectorAll('.review-slide');
     const sliderWrapper2 = document.querySelector('.review-slider-wrapper');
     const prevButton2 = document.querySelector('.button-prew');
     const nextButton2 = document.querySelector('.button-next');
     let currentIndex2 = 0;
 
-    function updateSlides2() {
-        const slideWidth = slides2[0].getBoundingClientRect().width;
-        const offset = -currentIndex2 * slideWidth;
+    // Перевірка, чи всі елементи другого слайдера присутні
+    if (sliderWrapper2 && slides2.length > 0 && prevButton2 && nextButton2) {
+        function updateSlides2() {
+            const slideWidth = slides2[0].getBoundingClientRect().width;
+            const offset = -currentIndex2 * slideWidth;
 
-        sliderWrapper2.style.transform = `translateX(${offset}px)`;
+            sliderWrapper2.style.transform = `translateX(${offset}px)`;
 
-        slides2.forEach((slide, index) => {
-            slide.classList.remove('current-slide', 'next-slide', 'prev-slide');
-            if (index === currentIndex2) {
-                slide.classList.add('current-slide');
-            } else if (index === (currentIndex2 + 1) % slides2.length) {
-                slide.classList.add('next-slide');
-            } else if (index === (currentIndex2 - 1 + slides2.length) % slides2.length) {
-                slide.classList.add('prev-slide');
-            }
+            slides2.forEach((slide, index) => {
+                slide.classList.remove('current-slide', 'next-slide', 'prev-slide');
+                if (index === currentIndex2) {
+                    slide.classList.add('current-slide');
+                } else if (index === (currentIndex2 + 1) % slides2.length) {
+                    slide.classList.add('next-slide');
+                } else if (index === (currentIndex2 - 1 + slides2.length) % slides2.length) {
+                    slide.classList.add('prev-slide');
+                }
+            });
+        }
+
+        prevButton2.addEventListener('click', () => {
+            currentIndex2 = (currentIndex2 === 0) ? slides2.length - 1 : currentIndex2 - 1;
+            updateSlides2();
         });
+
+        nextButton2.addEventListener('click', () => {
+            currentIndex2 = (currentIndex2 === slides2.length - 1) ? 0 : currentIndex2 + 1;
+            updateSlides2();
+        });
+
+        updateSlides2();
     }
-
-    prevButton2.addEventListener('click', () => {
-        currentIndex2 = (currentIndex2 === 0) ? slides2.length - 1 : currentIndex2 - 1;
-        updateSlides2();
-    });
-
-    nextButton2.addEventListener('click', () => {
-        currentIndex2 = (currentIndex2 === slides2.length - 1) ? 0 : currentIndex2 + 1;
-        updateSlides2();
-    });
-    updateSlides2();
 });
+
 
 // About Us ---------------------------------------------------
 document.addEventListener('DOMContentLoaded', function () {
@@ -359,11 +377,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const photoSlides = document.querySelectorAll('.slide-photo-wrap .wrap-photo');
     const infoSlides = document.querySelectorAll('.wrap-card-slide .about-us-slide');
 
-    // Перевірка, чи є слайди в DOM
-    if (photoSlides.length === 0 || infoSlides.length === 0) {
-        console.error('Слайди не знайдені');
-        return;
-    }
+   // Перевірка наявності елементів на сторінці
+   if (!prevBtn || !nextBtn || photoSlides.length === 0 || infoSlides.length === 0) {
+    return;
+}
 
     // Встановлюємо початковий індекс активного слайду
     let currentIndex = 0;
@@ -430,6 +447,9 @@ function loadImages(category) {
     const folderPath = `portfolio/photo/photo-${category}/`;
     let grids = document.querySelectorAll('.lists-card');
 
+    // Перевіряємо, чи сітки існують на сторінці
+    if (!grids || grids.length === 0) return;
+
     // Очищаємо кожну сітку перед завантаженням
     grids.forEach(grid => {
         grid.innerHTML = ''; // Очищаємо контент сіток
@@ -479,11 +499,11 @@ function loadImages(category) {
             const imgElement = document.createElement('img');
             imgElement.classList.add('item__img-card');
             imgElement.src = loadedImages[i];
-            imgElement.alt = `Категорія ${category} фото ${loadedImages.length - i}`; // Змінено для правильного нумерування
+            imgElement.alt = `Категорія ${category} фото ${loadedImages.length - i}`;
 
             // Додаємо обробник події для відкриття модального вікна
             imgElement.addEventListener('click', () => {
-                openModal(i); // Виклик функції відкриття модального вікна з індексом
+                openModal(i);
             });
 
             // Створюємо обгортку для фото
@@ -493,35 +513,43 @@ function loadImages(category) {
 
             // Додаємо фото в поточну сітку
             grids[gridIndex].appendChild(listItem);
-            gridIndex = (gridIndex + 1) % grids.length; // Циклічно додаємо до сіток
+            gridIndex = (gridIndex + 1) % grids.length;
         }
     }
 
     // Функція для відкриття модального вікна
-    let currentImageIndex = 0; // Індекс поточного зображення
+    let currentImageIndex = 0;
 
     function openModal(index) {
         const photoModal = document.getElementById('photoModal');
         const modalImage = document.getElementById('modalImage');
 
-        modalImage.src = loadedImages[index]; // Встановлюємо зображення у модалі
-        currentImageIndex = index; // Зберігаємо індекс поточного зображення
-        photoModal.style.display = 'block'; // Показуємо модальне вікно
+        // Перевіряємо, чи модальні елементи існують
+        if (!photoModal || !modalImage) return;
+
+        modalImage.src = loadedImages[index];
+        currentImageIndex = index;
+        photoModal.style.display = 'block';
 
         // Додаємо обробники подій для свайпа
         setupSwipeHandlers();
     }
 
     // Функції для навігації у модальному вікні
-    document.getElementById('fullModalNext').onclick = function () {
-        currentImageIndex = (currentImageIndex - 1 + loadedImages.length) % loadedImages.length; // Наступне зображення
-        document.getElementById('modalImage').src = loadedImages[currentImageIndex]; // Змінюємо зображення у модалі
-    };
+    const fullModalNext = document.getElementById('fullModalNext');
+    const fullModalPrew = document.getElementById('fullModalPrew');
 
-    document.getElementById('fullModalPrew').onclick = function () {
-        currentImageIndex = (currentImageIndex + 1) % loadedImages.length; // Попереднє зображення
-        document.getElementById('modalImage').src = loadedImages[currentImageIndex]; // Змінюємо зображення у модалі
-    };
+    if (fullModalNext && fullModalPrew) {
+        fullModalNext.onclick = function () {
+            currentImageIndex = (currentImageIndex - 1 + loadedImages.length) % loadedImages.length;
+            document.getElementById('modalImage').src = loadedImages[currentImageIndex];
+        };
+
+        fullModalPrew.onclick = function () {
+            currentImageIndex = (currentImageIndex + 1) % loadedImages.length;
+            document.getElementById('modalImage').src = loadedImages[currentImageIndex];
+        };
+    }
 
     // Додаємо обробники подій для свайпа
     let startX, endX;
@@ -529,43 +557,47 @@ function loadImages(category) {
     function setupSwipeHandlers() {
         const photoModal = document.getElementById('photoModal');
 
+        if (!photoModal) return;
+
         photoModal.addEventListener('touchstart', function (event) {
-            startX = event.touches[0].clientX; // Зберігаємо початкову позицію
+            startX = event.touches[0].clientX;
         });
 
         photoModal.addEventListener('touchmove', function (event) {
-            endX = event.touches[0].clientX; // Зберігаємо кінцеву позицію
+            endX = event.touches[0].clientX;
         });
 
         photoModal.addEventListener('touchend', function () {
             if (startX > endX + 50) {
-                // Якщо свайп вліво
-                document.getElementById('fullModalNext').click(); // Виклик функції переходу на наступне зображення
+                fullModalNext && fullModalNext.click();
             } else if (startX + 50 < endX) {
-                // Якщо свайп вправо
-                document.getElementById('fullModalPrew').click(); // Виклик функції переходу на попереднє зображення
+                fullModalPrew && fullModalPrew.click();
             }
         });
     }
 
     // Функція для закриття модального вікна
-    function closeModal() {
-        const photoModal = document.getElementById('photoModal');
-        photoModal.style.display = 'none'; // Ховаємо модальне вікно
+    const closeBtn = document.querySelector('.close');
+
+    if (closeBtn) {
+        closeBtn.onclick = closeModal;
     }
 
-    document.querySelector('.close').onclick = closeModal; // Обробник закриття модального вікна
+    function closeModal() {
+        const photoModal = document.getElementById('photoModal');
+        if (photoModal) photoModal.style.display = 'none';
+    }
 
-    // Додаємо обробник події для закриття модального вікна при натисканні клавіші Esc
     document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') { // Перевірка на клавішу Esc
-            closeModal(); // Виклик функції закриття
+        if (event.key === 'Escape') {
+            closeModal();
         }
     });
 
     // Починаємо завантаження зображень
     loadNextImage();
 }
+
 
 // Функція для зміни сітки в залежності від розміру екрану
 function adjustGridsForScreenSize() {
@@ -619,7 +651,6 @@ loadImages(currentCategory);
 window.addEventListener('resize', adjustGridsForScreenSize);
 
 //  portfolio-video -----------------------------------------------
-// Оновлений об'єкт з відео для кожної категорії
 const videosByCategory = {
     'video-star': [
         'https://www.youtube.com/embed/GCKOoFiWHi4',
@@ -666,10 +697,16 @@ function getCategoryFromUrl() {
 // Функція для завантаження відео для відповідної категорії
 function loadVideosForCategory(category) {
     const videoList = document.getElementById('video-list');
+    
+    // Перевірка, чи є елемент на сторінці
+    if (!videoList) {
+        return; // Якщо елемент не знайдений, функція не виконується
+    }
+
     const videos = videosByCategory[category];
 
     if (videos) {
-        // Очищуємо список перед завантаженням нових відео
+        // Очищаємо список перед завантаженням нових відео
         videoList.innerHTML = '';
 
         // Генеруємо відео елементи
@@ -691,6 +728,7 @@ function loadVideosForCategory(category) {
         videoList.innerHTML = '<p>Відео для цієї категорії відсутні.</p>';
     }
 }
+
 
 // Отримуємо категорію з URL і завантажуємо відповідні відео
 const category = getCategoryFromUrl();
