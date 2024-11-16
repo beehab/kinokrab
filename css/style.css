@@ -1455,13 +1455,30 @@ h2.subtitle-home-page {
 }
 
 .footer__items [class*="footer__item"]>[class*="footer__link"] {
-  display: inline-flex;
+  display: flex;
+  align-items: center;
   transition: 0.3s;
 }
 
 .footer__item-mes {
   display: flex;
   flex-direction: column;
+}
+
+.footcat-photo::before {
+  content: "";
+  background: url(../img/icons/icon-photo-footer.svg) center no-repeat;
+  width: 22px;
+  height: 22px;
+  margin-right: 10px;
+}
+
+.footcat-video::before {
+  content: "";
+  background: url(../img/icons/icon-video-footer.svg) center no-repeat;
+  width: 22px;
+  height: 22px;
+  margin-right: 10px;
 }
 
 [class*="footer__link"]:hover {
@@ -1497,9 +1514,14 @@ h2.subtitle-home-page {
   margin-right: 10px;
 }
 
+.footer__item-tel {
+  display: flex;
+  flex-direction: column;
+}
+
 .footer__link-tel::before {
   content: "";
-  background: url(../img/icons/popup/icon-tel.svg) 0 0 no-repeat;
+  background: url(../img/icons/popup/icon-tel.svg) center no-repeat;
   width: 15px;
   height: 30px;
   margin-right: 10px;
@@ -1507,15 +1529,15 @@ h2.subtitle-home-page {
 
 .footer__link-email::before {
   content: "";
-  background: url(../img/icons/popup/icon-email.svg) 0 0 no-repeat;
+  background: url(../img/icons/popup/icon-email.svg) center no-repeat;
   width: 20px;
   height: 15px;
   margin-right: 10px;
-}
+  }
 
 .footer__link-facebook::before {
   content: "";
-  background: url(../img/icons/icon-facebook.svg) 0 0 no-repeat;
+  background: url(../img/icons/icon-facebook.svg) center no-repeat;
   width: 30px;
   height: 30px;
   margin-right: 10px;
@@ -1523,7 +1545,14 @@ h2.subtitle-home-page {
 
 .footer__link-instagram::before {
   content: "";
-  background: url(../img/icons/icon-Instagram.svg) 0 0 no-repeat;
+  background: url(../img/icons/icon-Instagram.svg) center no-repeat;
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+.footer__link-tiktok::before {
+  content: "";
+  background: url(../img/icons/icon-tik-tok.svg) center no-repeat;
   width: 30px;
   height: 30px;
   margin-right: 10px;
